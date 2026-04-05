@@ -46,6 +46,7 @@
 
         <div id="student-list-table" class="card m-2 p-2">
             <h4 class="card-title">Student List</h4>
+            <h5>{{ numberOfStudents }} students in class register.</h5>
             <div id="student-table">
                 <table class="table">
                     <thead>
@@ -107,7 +108,7 @@
     <script>
 
         // This is where we will create our Vue app and define its data and methods
-        const { createApp, ref } = Vue
+        const { createApp, ref, computed } = Vue
 
         // This is the Vue app instance
         createApp({
@@ -200,6 +201,10 @@
                     })
                 })
 
+                const numberOfStudents = computed( () => {
+                    return studentList.value.length
+                })
+
                 return {
                     // return reactive data
                     newStudentName,
@@ -215,6 +220,7 @@
 
                     // return computed properties
                     sortedStudents,
+                    numberOfStudents
                 }
             }
         }).mount('#app')
