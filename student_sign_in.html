@@ -53,6 +53,7 @@
                             <th>Name</th>
                             <th>StarID</th>
                             <th>Present?</th>
+                            <th>Delete?</th>
                         </tr>
                     </thead>
 
@@ -63,13 +64,19 @@
                         the student will be signed in/out -->
 
                         <!-- v-for loops through students in studentList -->
-                        <tr v-for="student in studentList" :key="student.starID">
+                        <tr v-for="student in studentList" v-bind:class="{ present: student.isPresent, absent: !student.isPresent }" :key="student.starID">
                             <!-- Gets the student's name -->
                             <td>{{ student.name }}</td>
                             <!-- Gets the student's Star ID -->
                             <td>{{ student.starID }}</td>
                             <!-- Checkbox for student presence -->
-                            <td><input type="checkbox" :checked="student.isPresent" @change="toggleStudentPresence(student)"></td>
+                            <td>
+                                <input type="checkbox" v-model="student.isPresent" v-on:change="arrivedOrLeft(student)">
+                                <span v-if="student.isPresent" class="mx-1">Here!</span>
+                                <span v-else class="mx-1">Not present</span>
+                            </td>
+                            <!-- Delete button -->
+                            <td><button class="btn btn-danger" v-on:click="deleteStudent(student)">Delete</button></td>
                         </tr>
 
                    </tbody>
@@ -81,7 +88,14 @@
         <div id="welcome-or-goodbye-message" class="m-2">
             
             <!-- TODO show a message when student arrives or leaves  -->
-            
+            <div v-if="mostRecentStudent.name">
+                <div v-if="mostRecentStudent.isPresent" class="alert alert-success">
+                    Welcome, {{ mostRecentStudent.name }}!
+                </div>
+                <div v-else class="alert alert-info">
+                    Goodbye, {{ mostRecentStudent.name }}! See you later!
+                </div>
+            </div>
         </div>
 
     </div>
@@ -108,6 +122,8 @@
 
                 // This will hold any errors from form validation
                 const formErrors = ref([])
+
+                const mostRecentStudent = ref({}) // This will hold the most recent student to arrive or leave
 
                 // TODO create functions
 
@@ -143,6 +159,15 @@
                     }
                 }
 
+                function arrivedOrLeft(student) {
+                    // For now, just show an alert with the student's name and whether they arrived or left
+                    //alert(student.name + ' has ' + (student.isPresent ? 'arrived' : 'left') + '.')
+
+                    mostRecentStudent.value = student
+                }
+                function deleteStudent(student) {
+                    // TODO delete the student from the student list
+                }
                 // TODO create computed properties
 
                 return {
@@ -151,7 +176,10 @@
                     newStarID,
                     studentList,
                     formErrors,
+                    mostRecentStudent,
                     addStudent,
+                    arrivedOrLeft,
+                    deleteStudent,
                 }
             }
         }).mount('#app')
