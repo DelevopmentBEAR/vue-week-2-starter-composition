@@ -64,7 +64,7 @@
                         the student will be signed in/out -->
 
                         <!-- v-for loops through students in studentList -->
-                        <tr v-for="student in studentList" v-bind:class="{ present: student.isPresent, absent: !student.isPresent }" :key="student.starID">
+                        <tr v-for="student in sortedStudents" v-bind:class="{ present: student.isPresent, absent: !student.isPresent }" :key="student.starID">
                             <!-- Gets the student's name -->
                             <td>{{ student.name }}</td>
                             <!-- Gets the student's Star ID -->
@@ -163,12 +163,16 @@
                     }
                 }
 
+                // This function will be called when a student's presence checkbox is changed
                 function arrivedOrLeft(student) {
+
                     // For now, just show an alert with the student's name and whether they arrived or left
                     //alert(student.name + ' has ' + (student.isPresent ? 'arrived' : 'left') + '.')
 
                     mostRecentStudent.value = student
                 }
+
+                // This function will be called when the delete button is clicked for a student
                 function deleteStudent(studentToDelete) {
                     // TODO delete the student from the student list
 
@@ -188,16 +192,29 @@
 
                 // TODO create computed properties
 
+                // This computed property will return the student list sorted alphabetically by name
+                const sortedStudents = computed( () => {
+                    // Sort student array in name order, regardless of case
+                    return studentList.value.toSorted( (student1, student2) => {
+                        return student1.name.localeCompare(student2.name)
+                    })
+                })
+
                 return {
-                    // TODO return reactive data, functions, and computed properties
+                    // return reactive data
                     newStudentName,
                     newStarID,
                     studentList,
                     formErrors,
                     mostRecentStudent,
+
+                    // return functions
                     addStudent,
                     arrivedOrLeft,
                     deleteStudent,
+
+                    // return computed properties
+                    sortedStudents,
                 }
             }
         }).mount('#app')
